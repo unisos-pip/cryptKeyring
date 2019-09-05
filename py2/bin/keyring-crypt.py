@@ -400,7 +400,11 @@ class examples(icm.Cmnd):
 """
 ####+END:
 
-        cryptKeyring.examples_libModuleCmnds()
+        cryptKeyring.examples_libModuleCmnds(
+            keyring='keyring',
+            system='sysEx2',
+            user='userEx2',
+        )
         
 
 ####+BEGIN: bx:icm:python:cmnd:subSection :title "Remain In Sycn With Template"

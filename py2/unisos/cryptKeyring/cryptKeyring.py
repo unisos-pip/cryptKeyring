@@ -328,7 +328,7 @@ def examples_libModuleCmnds(
         system="sysEx1"
         
     if not user:
-        system="userEx1"
+        user="userEx1"
         
     rsrcPath = """{keyring}/{system}/{user}""".format(keyring=keyring, system=system, user=user)        
 
