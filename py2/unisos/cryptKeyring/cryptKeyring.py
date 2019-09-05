@@ -302,11 +302,15 @@ def commonParamsSpecify(
 ####+END:
 
 
-####+BEGIN: bx:icm:python:func :funcName "examples_libModuleCmnds" :funcType "anyOrNone" :retType "bool" :deco "" :argsList ""
+####+BEGIN: bx:icm:python:func :funcName "examples_libModuleCmnds" :funcType "anyOrNone" :retType "bool" :deco "" :argsList "keyring=None system=None user=None"
 """
-*  [[elisp:(org-cycle)][| ]] [[elisp:(org-show-subtree)][|=]] [[elisp:(show-children 10)][|V]] [[elisp:(bx:orgm:indirectBufOther)][|>]] [[elisp:(bx:orgm:indirectBufMain)][|I]] [[elisp:(blee:ppmm:org-mode-toggle)][|N]] [[elisp:(org-top-overview)][|O]] [[elisp:(progn (org-shifttab) (org-content))][|C]] [[elisp:(delete-other-windows)][|1]]  Func-anyOrNone :: /examples_libModuleCmnds/ retType=bool argsList=nil  [[elisp:(org-cycle)][| ]]
+*  [[elisp:(org-cycle)][| ]] [[elisp:(org-show-subtree)][|=]] [[elisp:(show-children 10)][|V]] [[elisp:(bx:orgm:indirectBufOther)][|>]] [[elisp:(bx:orgm:indirectBufMain)][|I]] [[elisp:(blee:ppmm:org-mode-toggle)][|N]] [[elisp:(org-top-overview)][|O]] [[elisp:(progn (org-shifttab) (org-content))][|C]] [[elisp:(delete-other-windows)][|1]]  Func-anyOrNone :: /examples_libModuleCmnds/ retType=bool argsList=(keyring=None system=None user=None)  [[elisp:(org-cycle)][| ]]
 """
-def examples_libModuleCmnds():
+def examples_libModuleCmnds(
+    keyring=None,
+    system=None,
+    user=None,
+):
 ####+END:
     """
 ** Auxiliary examples to be commonly used.x2
@@ -317,6 +321,16 @@ def examples_libModuleCmnds():
     def menuItem(verbosity): icm.ex_gCmndMenuItem(cmndName, cps, cmndArgs, verbosity=verbosity)            
     def execLineEx(cmndStr): icm.ex_gExecMenuItem(execLine=cmndStr)
 
+    if not keyring:
+        keyring="keyring"
+
+    if not system:
+        system="sysEx1"
+        
+    if not user:
+        system="userEx1"
+        
+    rsrcPath = """{keyring}/{system}/{user}""".format(keyring=keyring, system=system, user=user)        
 
 ####+BEGIN: bx:icm:python:cmnd:subSection :context "func-1" :title "Prepare Crypto Keyring"
     """
@@ -330,8 +344,8 @@ def examples_libModuleCmnds():
 
     def thisBlock():
         cmndArgs = "";
-        cps = cpsInit();  cps['rsrc'] = 'system/sysEx1/userEx1';  cps['system'] = 'sysEx1'; cps['user'] = 'userEx1';
-        icm.ex_gCmndMenuItem(cmndName, cps, cmndArgs, verbosity='none')
+        cps = cpsInit();  cps['rsrc'] = 'keyring'
+        icm.ex_gCmndMenuItem(cmndName, cps, cmndArgs, verbosity='none', comment="# One time initialization")
         icm.ex_gCmndMenuItem(cmndName, cps, cmndArgs, verbosity='full')                        
     thisBlock()
 
@@ -344,36 +358,55 @@ def examples_libModuleCmnds():
 
     icm.cmndExampleMenuChapter('*Set Password In Crypto Keyring*')
 
-    cmndName = "passwdSet"
-
+    cmndName = "cryptPasswdSet"
+    
     def thisBlock():
         cmndArgs = "";
-        cps = cpsInit();  cps['rsrc'] = 'system/sysEx1/userEx1';  cps['system'] = 'sysEx1'; cps['user'] = 'userEx1'; cps['passwdPolicy'] = 'prompt'
+        cps = cpsInit();  cps['rsrc'] = rsrcPath;  cps['passwdPolicy'] = 'prompt'
         icm.ex_gCmndMenuItem(cmndName, cps, cmndArgs, verbosity='none')
         icm.ex_gCmndMenuItem(cmndName, cps, cmndArgs, verbosity='full')                        
     thisBlock()
+    
 
     def thisBlock():
         cmndArgs = "somePasswd";
-        cps = cpsInit();  cps['rsrc'] = 'system/sysEx1/userEx1';  cps['system'] = 'sysEx1'; cps['user'] = 'userEx1'
+        cps = cpsInit();  cps['rsrc'] = rsrcPath; 
         icm.ex_gCmndMenuItem(cmndName, cps, cmndArgs, verbosity='none')
     thisBlock()
 
     
 
-####+BEGIN: bx:icm:python:cmnd:subSection :context "func-1" :context "func-1" :title "Get Password From Crypto Keyring"
+####+BEGIN: bx:icm:python:cmnd:subSection :context "func-1" :context "func-1" :title "Get Password From Crypto Keyring (Decrypted)"
     """
 **   [[elisp:(org-cycle)][| ]] [[elisp:(org-show-subtree)][|=]] [[elisp:(show-children 10)][|V]] [[elisp:(bx:orgm:indirectBufOther)][|>]] [[elisp:(bx:orgm:indirectBufMain)][|I]] [[elisp:(blee:ppmm:org-mode-toggle)][|N]] [[elisp:(org-top-overview)][|O]] [[elisp:(progn (org-shifttab) (org-content))][|C]] [[elisp:(delete-other-windows)][|1]]          *Get Password From Crypto Keyring*  [[elisp:(org-cycle)][| ]]  [[elisp:(org-show-subtree)][|=]] 
 """
 ####+END:
 
-    icm.cmndExampleMenuChapter('*Get Password From Crypto Keyring*')
+    icm.cmndExampleMenuChapter('*Get Password From Crypto Keyring (Decrypted)*')
 
-    cmndName = "passwdGet"
+    cmndName = "clearPasswdGet"
+    def thisBlock():
+        cmndArgs = "";
+        cps = cpsInit();  cps['rsrc'] = rsrcPath
+        icm.ex_gCmndMenuItem(cmndName, cps, cmndArgs, verbosity='none')
+    thisBlock()
 
-    cmndArgs = ""; cps = cpsInit();  cps['rsrc'] = 'system/sysEx1/userEx1';  cps['system'] = 'sysEx1'; cps['user'] = 'userEx1';
-    menuItem(verbosity='none')
-    icm.ex_gCmndMenuItem(cmndName, cps, cmndArgs, verbosity='full')        
+    
+####+BEGIN: bx:icm:python:cmnd:subSection :context "func-1" :context "func-1" :title "Get Password From Keyring (Encrypted)"
+    """
+**   [[elisp:(org-cycle)][| ]] [[elisp:(org-show-subtree)][|=]] [[elisp:(show-children 10)][|V]] [[elisp:(bx:orgm:indirectBufOther)][|>]] [[elisp:(bx:orgm:indirectBufMain)][|I]] [[elisp:(blee:ppmm:org-mode-toggle)][|N]] [[elisp:(org-top-overview)][|O]] [[elisp:(progn (org-shifttab) (org-content))][|C]] [[elisp:(delete-other-windows)][|1]]          *Get Password From Crypto Keyring*  [[elisp:(org-cycle)][| ]]  [[elisp:(org-show-subtree)][|=]] 
+"""
+####+END:
+
+    icm.cmndExampleMenuChapter('*Get Password From Keyring (Encrypted)*')
+
+    cmndName = "keyringPasswdGet"
+    def thisBlock():
+        cmndArgs = "";
+        cps = cpsInit();  cps['rsrc'] = rsrcPath
+        icm.ex_gCmndMenuItem(cmndName, cps, cmndArgs, verbosity='none')
+    thisBlock()
+
 
 
 ####+BEGIN: bx:icm:python:cmnd:subSection :context "func-1" :context "func-1" :title "Delete Password From Crypto Keyring"
@@ -386,11 +419,11 @@ def examples_libModuleCmnds():
 
     cmndName = "passwdDelete"
 
-    cmndArgs = ""; cps = cpsInit();  cps['rsrc'] = 'system/sysEx1/userEx1';  cps['system'] = 'sysEx1'; cps['user'] = 'userEx1';
-    menuItem(verbosity='none')
-    icm.ex_gCmndMenuItem(cmndName, cps, cmndArgs, verbosity='full')        
-
-
+    def thisBlock():
+        cmndArgs = "";
+        cps = cpsInit();  cps['rsrc'] = rsrcPath
+        icm.ex_gCmndMenuItem(cmndName, cps, cmndArgs, verbosity='none')
+    thisBlock()
     
         
 ####+BEGIN: bx:icm:python:cmnd:subSection :context "func-1" :title "Remain In Sycn With Template"
@@ -428,31 +461,37 @@ def examples_libModuleCmnds():
 ####+END:
 
 
-####+BEGIN: bx:icm:python:cmnd:classHead :cmndName "prepare" :comment "" :parsMand "" :parsOpt "" :argsMin "0" :argsMax "0" :asFunc "" :interactiveP ""
+####+BEGIN: bx:icm:python:cmnd:classHead :cmndName "prepare" :comment "" :parsMand "rsrc" :parsOpt "" :argsMin "0" :argsMax "0" :asFunc "" :interactiveP ""
 """
-*  [[elisp:(org-cycle)][| ]] [[elisp:(org-show-subtree)][|=]] [[elisp:(show-children 10)][|V]] [[elisp:(bx:orgm:indirectBufOther)][|>]] [[elisp:(bx:orgm:indirectBufMain)][|I]] [[elisp:(blee:ppmm:org-mode-toggle)][|N]] [[elisp:(org-top-overview)][|O]] [[elisp:(progn (org-shifttab) (org-content))][|C]] [[elisp:(delete-other-windows)][|1]]  ICM-Cmnd       :: /prepare/ parsMand= parsOpt= argsMin=0 argsMax=0 asFunc= interactive=  [[elisp:(org-cycle)][| ]]
+*  [[elisp:(org-cycle)][| ]] [[elisp:(org-show-subtree)][|=]] [[elisp:(show-children 10)][|V]] [[elisp:(bx:orgm:indirectBufOther)][|>]] [[elisp:(bx:orgm:indirectBufMain)][|I]] [[elisp:(blee:ppmm:org-mode-toggle)][|N]] [[elisp:(org-top-overview)][|O]] [[elisp:(progn (org-shifttab) (org-content))][|C]] [[elisp:(delete-other-windows)][|1]]  ICM-Cmnd       :: /prepare/ parsMand=rsrc parsOpt= argsMin=0 argsMax=0 asFunc= interactive=  [[elisp:(org-cycle)][| ]]
 """
 class prepare(icm.Cmnd):
-    cmndParamsMandatory = [ ]
+    cmndParamsMandatory = [ 'rsrc', ]
     cmndParamsOptional = [ ]
     cmndArgsLen = {'Min': 0, 'Max': 0,}
 
     @icm.subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True)
     def cmnd(self,
         interactive=False,        # Can also be called non-interactively
+        rsrc=None,         # or Cmnd-Input
     ):
         cmndOutcome = self.getOpOutcome()
         if interactive:
             if not self.cmndLineValidate(outcome=cmndOutcome):
                 return cmndOutcome
 
-        callParamsDict = {}
+        callParamsDict = {'rsrc': rsrc, }
         if not icm.cmndCallParamsValidate(callParamsDict, interactive, outcome=cmndOutcome):
             return cmndOutcome
+        rsrc = callParamsDict['rsrc']
 
 ####+END:
         opError=icm.OpError.Success
 
+        rsrcPath = os.path.normpath(rsrc)
+        rsrcParts = rsrcPath.split(os.sep)
+
+        rsrcBase = rsrcParts[0]
         
         cryptoKeyring = CryptoKeyring()
 
@@ -481,12 +520,12 @@ class prepare(icm.Cmnd):
 ####+END:
 
 
-####+BEGIN: bx:icm:python:cmnd:classHead :cmndName "passwdSet" :comment "" :parsMand "rsrc system user" :parsOpt "passwdPolicy" :argsMin "0" :argsMax "1" :asFunc "" :interactiveP ""
+####+BEGIN: bx:icm:python:cmnd:classHead :cmndName "cryptPasswdSet" :comment "" :parsMand "rsrc" :parsOpt "passwdPolicy" :argsMin "0" :argsMax "1" :asFunc "" :interactiveP ""
 """
-*  [[elisp:(org-cycle)][| ]] [[elisp:(org-show-subtree)][|=]] [[elisp:(show-children 10)][|V]] [[elisp:(bx:orgm:indirectBufOther)][|>]] [[elisp:(bx:orgm:indirectBufMain)][|I]] [[elisp:(blee:ppmm:org-mode-toggle)][|N]] [[elisp:(org-top-overview)][|O]] [[elisp:(progn (org-shifttab) (org-content))][|C]] [[elisp:(delete-other-windows)][|1]]  ICM-Cmnd       :: /passwdSet/ parsMand=rsrc system user parsOpt=passwdPolicy argsMin=0 argsMax=1 asFunc= interactive=  [[elisp:(org-cycle)][| ]]
+*  [[elisp:(org-cycle)][| ]] [[elisp:(org-show-subtree)][|=]] [[elisp:(show-children 10)][|V]] [[elisp:(bx:orgm:indirectBufOther)][|>]] [[elisp:(bx:orgm:indirectBufMain)][|I]] [[elisp:(blee:ppmm:org-mode-toggle)][|N]] [[elisp:(org-top-overview)][|O]] [[elisp:(progn (org-shifttab) (org-content))][|C]] [[elisp:(delete-other-windows)][|1]]  ICM-Cmnd       :: /cryptPasswdSet/ parsMand=rsrc parsOpt=passwdPolicy argsMin=0 argsMax=1 asFunc= interactive=  [[elisp:(org-cycle)][| ]]
 """
-class passwdSet(icm.Cmnd):
-    cmndParamsMandatory = [ 'rsrc', 'system', 'user', ]
+class cryptPasswdSet(icm.Cmnd):
+    cmndParamsMandatory = [ 'rsrc', ]
     cmndParamsOptional = [ 'passwdPolicy', ]
     cmndArgsLen = {'Min': 0, 'Max': 1,}
 
@@ -494,8 +533,6 @@ class passwdSet(icm.Cmnd):
     def cmnd(self,
         interactive=False,        # Can also be called non-interactively
         rsrc=None,         # or Cmnd-Input
-        system=None,         # or Cmnd-Input
-        user=None,         # or Cmnd-Input
         passwdPolicy=None,         # or Cmnd-Input
         argsList=[],         # or Args-Input
     ):
@@ -507,12 +544,10 @@ class passwdSet(icm.Cmnd):
         else:
             effectiveArgsList = argsList
 
-        callParamsDict = {'rsrc': rsrc, 'system': system, 'user': user, 'passwdPolicy': passwdPolicy, }
+        callParamsDict = {'rsrc': rsrc, 'passwdPolicy': passwdPolicy, }
         if not icm.cmndCallParamsValidate(callParamsDict, interactive, outcome=cmndOutcome):
             return cmndOutcome
         rsrc = callParamsDict['rsrc']
-        system = callParamsDict['system']
-        user = callParamsDict['user']
         passwdPolicy = callParamsDict['passwdPolicy']
 
         cmndArgsSpecDict = self.cmndArgsSpec()
@@ -521,6 +556,14 @@ class passwdSet(icm.Cmnd):
 ####+END:
         opError=icm.OpError.Success
 
+        rsrcPath = os.path.normpath(rsrc)
+        rsrcParts = rsrcPath.split(os.sep)
+
+        rsrcBase = rsrcParts[0]
+        system = rsrcParts[1]
+        user = rsrcParts[2]                
+
+        
         passwd=None
         
         cmndArgs = self.cmndArgsGet("0&1", cmndArgsSpecDict, effectiveArgsList)
@@ -546,13 +589,14 @@ class passwdSet(icm.Cmnd):
             user=user,
         )
 
-        opError = cryptoKeyring.passwdSet(passwd)
+        cryptedPasswd = cryptoKeyring.passwdSet(passwd)
 
-        #cryptoKeyring.save()        
+        if interactive:
+            print("cryptedPasswd={}".format(cryptedPasswd))
 
         return cmndOutcome.set(
             opError=opError,
-            opResults=None,
+            opResults=cryptedPasswd,
         )
 
 ####+BEGIN: bx:icm:python:method :methodName "cmndArgsSpec" :methodType "anyOrNone" :retType "bool" :deco "default" :argsList ""
@@ -596,40 +640,39 @@ class passwdSet(icm.Cmnd):
 ####+END:
 
 
-####+BEGIN: bx:icm:python:cmnd:classHead :cmndName "passwdGet" :comment "" :parsMand "rsrc system user" :parsOpt "" :argsMin "0" :argsMax "0" :asFunc "" :interactiveP ""
+####+BEGIN: bx:icm:python:cmnd:classHead :cmndName "clearPasswdGet" :comment "" :parsMand "rsrc" :parsOpt "" :argsMin "0" :argsMax "0" :asFunc "" :interactiveP ""
 """
-*  [[elisp:(org-cycle)][| ]] [[elisp:(org-show-subtree)][|=]] [[elisp:(show-children 10)][|V]] [[elisp:(bx:orgm:indirectBufOther)][|>]] [[elisp:(bx:orgm:indirectBufMain)][|I]] [[elisp:(blee:ppmm:org-mode-toggle)][|N]] [[elisp:(org-top-overview)][|O]] [[elisp:(progn (org-shifttab) (org-content))][|C]] [[elisp:(delete-other-windows)][|1]]  ICM-Cmnd       :: /passwdGet/ parsMand=rsrc system user parsOpt=passwd passwdPolicy argsMin=0 argsMax=0 asFunc= interactive=  [[elisp:(org-cycle)][| ]]
+*  [[elisp:(org-cycle)][| ]] [[elisp:(org-show-subtree)][|=]] [[elisp:(show-children 10)][|V]] [[elisp:(bx:orgm:indirectBufOther)][|>]] [[elisp:(bx:orgm:indirectBufMain)][|I]] [[elisp:(blee:ppmm:org-mode-toggle)][|N]] [[elisp:(org-top-overview)][|O]] [[elisp:(progn (org-shifttab) (org-content))][|C]] [[elisp:(delete-other-windows)][|1]]  ICM-Cmnd       :: /clearPasswdGet/ parsMand=rsrc parsOpt= argsMin=0 argsMax=0 asFunc= interactive=  [[elisp:(org-cycle)][| ]]
 """
-class passwdGet(icm.Cmnd):
-    cmndParamsMandatory = [ 'rsrc', 'system', 'user', ]
-    cmndParamsOptional = [ 'passwd', 'passwdPolicy', ]
+class clearPasswdGet(icm.Cmnd):
+    cmndParamsMandatory = [ 'rsrc', ]
+    cmndParamsOptional = [ ]
     cmndArgsLen = {'Min': 0, 'Max': 0,}
 
     @icm.subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True)
     def cmnd(self,
         interactive=False,        # Can also be called non-interactively
         rsrc=None,         # or Cmnd-Input
-        system=None,         # or Cmnd-Input
-        user=None,         # or Cmnd-Input
-        passwd=None,         # or Cmnd-Input
-        passwdPolicy=None,         # or Cmnd-Input
     ):
         cmndOutcome = self.getOpOutcome()
         if interactive:
             if not self.cmndLineValidate(outcome=cmndOutcome):
                 return cmndOutcome
 
-        callParamsDict = {'rsrc': rsrc, 'system': system, 'user': user, 'passwd': passwd, 'passwdPolicy': passwdPolicy, }
+        callParamsDict = {'rsrc': rsrc, }
         if not icm.cmndCallParamsValidate(callParamsDict, interactive, outcome=cmndOutcome):
             return cmndOutcome
         rsrc = callParamsDict['rsrc']
-        system = callParamsDict['system']
-        user = callParamsDict['user']
-        passwd = callParamsDict['passwd']
-        passwdPolicy = callParamsDict['passwdPolicy']
 
 ####+END:
         opError=icm.OpError.Success
+
+        rsrcPath = os.path.normpath(rsrc)
+        rsrcParts = rsrcPath.split(os.sep)
+        
+        rsrcBase = rsrcParts[0]
+        system = rsrcParts[1]
+        user = rsrcParts[2]                
 
         cryptoKeyring = CryptoKeyring(
             system=system,
@@ -638,11 +681,72 @@ class passwdGet(icm.Cmnd):
 
         clearPasswd = cryptoKeyring.passwdGet()
 
-        print(clearPasswd)
+        if interactive:        
+            print(clearPasswd)
 
         return cmndOutcome.set(
             opError=opError,
-            opResults=None,
+            opResults=clearPasswd,
+        )
+
+####+BEGIN: bx:icm:python:method :methodName "cmndDocStr" :methodType "anyOrNone" :retType "bool" :deco "default" :argsList ""
+    """
+**  [[elisp:(org-cycle)][| ]] [[elisp:(org-show-subtree)][|=]] [[elisp:(show-children 10)][|V]] [[elisp:(bx:orgm:indirectBufOther)][|>]] [[elisp:(bx:orgm:indirectBufMain)][|I]] [[elisp:(blee:ppmm:org-mode-toggle)][|N]] [[elisp:(org-top-overview)][|O]] [[elisp:(progn (org-shifttab) (org-content))][|C]] [[elisp:(delete-other-windows)][|1]]  Method-anyOrNone :: /cmndDocStr/ retType=bool argsList=nil deco=default  [[elisp:(org-cycle)][| ]]
+"""
+    @icm.subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True)
+    def cmndDocStr(self):
+####+END:        
+        return """
+***** TODO [[elisp:(org-cycle)][| *CmndDesc:* | ]]  Place holder for this commands doc string.
+"""
+
+
+
+####+BEGIN: bx:icm:python:cmnd:classHead :cmndName "keyringPasswdGet" :comment "" :parsMand "rsrc" :parsOpt "" :argsMin "0" :argsMax "0" :asFunc "" :interactiveP ""
+"""
+*  [[elisp:(org-cycle)][| ]] [[elisp:(org-show-subtree)][|=]] [[elisp:(show-children 10)][|V]] [[elisp:(bx:orgm:indirectBufOther)][|>]] [[elisp:(bx:orgm:indirectBufMain)][|I]] [[elisp:(blee:ppmm:org-mode-toggle)][|N]] [[elisp:(org-top-overview)][|O]] [[elisp:(progn (org-shifttab) (org-content))][|C]] [[elisp:(delete-other-windows)][|1]]  ICM-Cmnd       :: /keyringPasswdGet/ parsMand=rsrc parsOpt= argsMin=0 argsMax=0 asFunc= interactive=  [[elisp:(org-cycle)][| ]]
+"""
+class keyringPasswdGet(icm.Cmnd):
+    cmndParamsMandatory = [ 'rsrc', ]
+    cmndParamsOptional = [ ]
+    cmndArgsLen = {'Min': 0, 'Max': 0,}
+
+    @icm.subjectToTracking(fnLoc=True, fnEntry=True, fnExit=True)
+    def cmnd(self,
+        interactive=False,        # Can also be called non-interactively
+        rsrc=None,         # or Cmnd-Input
+    ):
+        cmndOutcome = self.getOpOutcome()
+        if interactive:
+            if not self.cmndLineValidate(outcome=cmndOutcome):
+                return cmndOutcome
+
+        callParamsDict = {'rsrc': rsrc, }
+        if not icm.cmndCallParamsValidate(callParamsDict, interactive, outcome=cmndOutcome):
+            return cmndOutcome
+        rsrc = callParamsDict['rsrc']
+
+####+END:
+        opError=icm.OpError.Success
+
+        rsrcPath = os.path.normpath(rsrc)
+        rsrcParts = rsrcPath.split(os.sep)
+
+        rsrcBase = rsrcParts[0]
+        system = rsrcParts[1]
+        user = rsrcParts[2]                
+
+        keyringPasswd = keyring.get_password(system, user)
+
+        if interactive:
+            if keyringPasswd:
+                print(keyringPasswd)
+            else:
+                print("No Passwd Found For: system={system} user={user}".format(system=system, user=user))
+
+        return cmndOutcome.set(
+            opError=opError,
+            opResults=keyringPasswd,
         )
 
 ####+BEGIN: bx:icm:python:method :methodName "cmndDocStr" :methodType "anyOrNone" :retType "bool" :deco "default" :argsList ""
@@ -856,6 +960,9 @@ class CryptoKeyring(object):
         """ Return passwd."""
 
         keyringPasswd = keyring.get_password(self.system, self.user)
+
+        if not keyringPasswd:
+            return None
         
         outcome = symCrypt.decrypt().cmnd(        
             interactive=False,
